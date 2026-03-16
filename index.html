@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MathEdu - Regra de Três e Notação Científica</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #ec4899;
+            --accent: #06b6d4;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        /* Animação de fundo */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-animation span {
+            position: absolute;
+            display: block;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            animation: move 25s linear infinite;
+            bottom: -150px;
+            border-radius: 50%;
+        }
+
+        .bg-animation span:nth-child(1) { left: 25%; width: 80px; height: 80px; animation-delay: 0s; }
+        .bg-animation span:nth-child(2) { left: 10%; width: 20px; height: 20px; animation-delay: 2s; animation-duration: 12s; }
+        .bg-animation span:nth-child(3) { left: 70%; width: 20px; height: 20px; animation-delay: 4s; }
+        .bg-animation span:nth-child(4) { left: 40%; width: 60px; height: 60px; animation-delay: 0s; animation-duration: 18s; }
+        .bg-animation span:nth-child(5) { left: 65%; width: 20px; height: 20px; animation-delay: 0s; }
+        .bg-animation span:nth-child(6) { left: 75%; width: 110px; height: 110px; animation-delay: 3s; }
+        .bg-animation span:nth-child(7) { left: 35%; width: 150px; height: 150px; animation-delay: 7s; }
+        .bg-animation span:nth-child(8) { left: 50%; width: 25px; height: 25px; animation-delay: 15s; animation-duration: 45s; }
+        .bg-animation span:nth-child(9) { left: 20%; width: 15px; height: 15px; animation-delay: 2s; animation-duration: 35s; }
+        .bg-animation span:nth-child(10) { left: 85%; width: 150px; height: 150px; animation-delay: 0s; animation-duration: 11s; }
+
+        @keyframes move {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; border-radius: 0; }
+            100% { transform: translateY(-1000px) rotate(720deg); opacity: 0; border-radius: 50%; }
+        }
+
+        /* Header */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo::before {
+            content: "∑";
+            font-size: 2rem;
+            -webkit-text-fill-color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 600;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Container principal */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Cards de seleção */
+        .topic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .topic-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .topic-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .topic-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+
+        .topic-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .topic-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .topic-card h2 {
+            color: var(--dark);
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+
+        .topic-card p {
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        /* Seções de conteúdo */
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-header {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .back-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-btn:hover {
+            background: var(--primary-dark);
+            transform: translateX(-5px);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: white;
+            border: 2px solid #e2e8f0;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: #64748b;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: scale(1.05);
+        }
+
+        .tab-btn:hover:not(.active) {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Conteúdo das tabs */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: slideIn 0.5s;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Cards de teoria */
+        .theory-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border-left: 5px solid var(--accent);
+        }
+
+        .theory-card h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .formula-box {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 2px solid var(--accent);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            text-align: center;
+            font-size: 1.3rem;
+            font-family: 'Courier New', monospace;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .formula-box::before {
+            content: "📐";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            opacity: 0.2;
+            font-size: 2rem;
+        }
+
+        /* Calculadora */
+        .calculator-container {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .operator {
+            font-size: 1.5rem;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 1rem;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+        }
+
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+
+        .result-box {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border: 2px solid var(--success);
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+            animation: popIn 0.5s;
+        }
+
+        .result-box.show {
+            display: block;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .result-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--success);
+            margin-top: 0.5rem;
+        }
+
+        .steps {
+            margin-top: 1rem;
+            text-align: left;
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: #475569;
+        }
+
+        /* Notação Científica específico */
+        .sci-inputs {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .sci-notation {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .sci-notation input {
+            width: 100px;
+            text-align: center;
+        }
+
+        .times-ten {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        /* Exercícios */
+        .exercise-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border-left: 5px solid var(--warning);
+            transition: transform 0.3s;
+        }
+
+        .exercise-card:hover {
+            transform: translateX(5px);
+        }
+
+        .exercise-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .difficulty {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .difficulty.easy { background: #d1fae5; color: #065f46; }
+        .difficulty.medium { background: #fef3c7; color: #92400e; }
+        .difficulty.hard { background: #fee2e2; color: #991b1b; }
+
+        .exercise-question {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .exercise-options {
+            display: grid;
+            gap: 0.8rem;
+        }
+
+        .option-btn {
+            padding: 1rem;
+            background: #f1f5f9;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .option-btn:hover {
+            background: #e2e8f0;
+            border-color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .option-btn.correct {
+            background: #d1fae5;
+            border-color: var(--success);
+            color: #065f46;
+        }
+
+        .option-btn.wrong {
+            background: #fee2e2;
+            border-color: #ef4444;
+            color: #991b1b;
+        }
+
+        .option-btn.disabled {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+            animation: slideDown 0.3s;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Progresso */
+        .progress-container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .topic-grid { grid-template-columns: 1fr; }
+            .input-row { grid-template-columns: 1fr; }
+            .operator { text-align: center; transform: rotate(90deg); }
+            .nav-links { display: none; }
+            .sci-inputs { grid-template-columns: 1fr; text-align: center; }
+        }
+
+        /* Animações de confete */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #f0f;
+            position: absolute;
+            animation: confetti-fall 3s linear forwards;
+            z-index: 9999;
+        }
+
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+        }
+
+        .tooltip:hover::after {
+            content: attr(data-tip);
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--dark);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            white-space: nowrap;
+            font-size: 0.9rem;
+            z-index: 1000;
+        }
+
+        /* Exemplos visuais */
+        .visual-example {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border: 2px dashed #cbd5e1;
+        }
+
+        .arrow {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin: 0 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Animação de fundo -->
+    <div class="bg-animation">
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <header>
+        <nav>
+            <div class="logo">MathEdu</div>
+            <ul class="nav-links">
+                <li><a href="#" onclick="showHome()">Início</a></li>
+                <li><a href="#regra-de-tres" onclick="showRegraDeTres()">Regra de Três</a></li>
+                <li><a href="#notacao-cientifica" onclick="showNotacaoCientifica()">Notação Científica</a></li>
+                <li><a href="#sobre">Sobre</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Página Inicial -->
+    <div id="home" class="container">
+        <div class="hero">
+            <h1>Aprenda Matemática de Forma Interativa</h1>
+            <p>Domine a Regra de Três e a Notação Científica com nossas calculadoras inteligentes e exercícios práticos.</p>
+        </div>
+
+        <div class="topic-grid">
+            <div class="topic-card" onclick="showRegraDeTres()">
+                <span class="topic-icon">⚖️</span>
+                <h2>Regra de Três</h2>
+                <p>Aprenda a resolver problemas de proporção de forma simples e rápida. Calculadora interativa incluída!</p>
+            </div>
+
+            <div class="topic-card" onclick="showNotacaoCientifica()">
+                <span class="topic-icon">🔬</span>
+                <h2>Notação Científica</h2>
+                <p>Domine a representação de números muito grandes ou muito pequenos usada na ciência e tecnologia.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Seção Regra de Três -->
+    <div id="regra-de-tres" class="container content-section">
+        <div class="section-header">
+            <button class="back-btn" onclick="showHome()">← Voltar</button>
+            <h1>⚖️ Regra de Três</h1>
+            <p>Resolva problemas de proporção direta e inversa</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('regra', 'teoria')">📚 Teoria</button>
+            <button class="tab-btn" onclick="switchTab('regra', 'calculadora')">🧮 Calculadora</button>
+            <button class="tab-btn" onclick="switchTab('regra', 'exercicios')">✏️ Exercícios</button>
+        </div>
+
+        <!-- Teoria Regra de Três -->
+        <div id="regra-teoria" class="tab-content active">
+            <div class="theory-card">
+                <h3>📖 O que é Regra de Três?</h3>
+                <p>A <strong>Regra de Três</strong> é um método matemático para resolver problemas envolvendo grandezas proporcionais. É uma das ferramentas mais úteis da matemática básica.</p>
+                
+                <div class="formula-box">
+                    <strong>Se a ↔ b<br>
+                    e c ↔ x<br>
+                    Então: x = (b × c) / a</strong>
+                </div>
+
+                <div class="visual-example">
+                    <strong>Exemplo Prático:</strong><br>
+                    Se 2 maçãs custam R$ 4,00, quanto custam 5 maçãs?<br><br>
+                    <span style="font-size: 1.2rem;">
+                        2 maçãs → R$ 4,00<br>
+                        5 maçãs → x<br>
+                        <br>
+                        x = (4 × 5) / 2 = <strong>R$ 10,00</strong>
+                    </span>
+                </div>
+            </div>
+
+            <div class="theory-card">
+                <h3>🔄 Proporção Direta vs Inversa</h3>
+                <p><strong>Direta:</strong> Quando uma grandeza aumenta, a outra também aumenta (ex: mais produtos = mais preço).</p>
+                <p><strong>Inversa:</strong> Quando uma grandeza aumenta, a outra diminui (ex: mais trabalhadores = menos tempo).</p>
+                
+                <div class="formula-box">
+                    <strong>Direta:</strong> x = (b × c) / a<br><br>
+                    <strong>Inversa:</strong> x = (a × b) / c
+                </div>
+            </div>
+        </div>
+
+        <!-- Calculadora Regra de Três -->
+        <div id="regra-calculadora" class="tab-content">
+            <div class="calculator-container">
+                <h2 style="text-align: center; margin-bottom: 1.5rem; color: var(--primary);">Calculadora de Regra de Três</h2>
+                
+                <div style="margin-bottom: 1rem; text-align: center;">
+                    <label style="margin-right: 1rem;">
+                        <input type="radio" name="tipo-regra" value="direta" checked onchange="updateRegraType()"> Direta
+                    </label>
+                    <label>
+                        <input type="radio" name="tipo-regra" value="inversa" onchange="updateRegraType()"> Inversa
+                    </label>
+                </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Valor A</label>
+                        <input type="number" id="regra-a" placeholder="Ex: 2" step="any">
+                    </div>
+                    <span class="operator">↔</span>
+                    <div class="input-group">
+                        <label>Valor B</label>
+                        <input type="number" id="regra-b" placeholder="Ex: 4" step="any">
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Valor C</label>
+                        <input type="number" id="regra-c" placeholder="Ex: 5" step="any">
+                    </div>
+                    <span class="operator">↔</span>
+                    <div class="input-group">
+                        <label>Valor X (Resultado)</label>
+                        <input type="text" id="regra-x" placeholder="?" readonly style="background: #f1f5f9;">
+                    </div>
+                </div>
+
+                <button class="calculate-btn" onclick="calcularRegraDeTres()">Calcular</button>
+
+                <div id="regra-resultado" class="result-box">
+                    <div>Resultado:</div>
+                    <div class="result-value" id="regra-result-value">-</div>
+                    <div class="steps" id="regra-steps"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exercícios Regra de Três -->
+        <div id="regra-exercicios" class="tab-content">
+            <div class="progress-container">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>Seu Progresso</span>
+                    <span id="regra-progress-text">0/3 concluídos</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="regra-progress-bar" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div id="regra-exercises-container"></div>
+        </div>
+    </div>
+
+    <!-- Seção Notação Científica -->
+    <div id="notacao-cientifica" class="container content-section">
+        <div class="section-header">
+            <button class="back-btn" onclick="showHome()">← Voltar</button>
+            <h1>🔬 Notação Científica</h1>
+            <p>Converta e opere com números em notação científica</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('notacao', 'teoria')">📚 Teoria</button>
+            <button class="tab-btn" onclick="switchTab('notacao', 'calculadora')">🧮 Calculadora</button>
+            <button class="tab-btn" onclick="switchTab('notacao', 'conversor')">🔄 Conversor</button>
+            <button class="tab-btn" onclick="switchTab('notacao', 'exercicios')">✏️ Exercícios</button>
+        </div>
+
+        <!-- Teoria Notação Científica -->
+        <div id="notacao-teoria" class="tab-content active">
+            <div class="theory-card">
+                <h3>📖 O que é Notação Científica?</h3>
+                <p>A <strong>Notação Científica</strong> é uma forma de escrever números muito grandes ou muito pequenos de maneira compacta, usando potências de base 10.</p>
+                
+                <div class="formula-box">
+                    <strong>N = a × 10ⁿ</strong><br>
+                    onde: 1 ≤ |a| < 10 e n ∈ ℤ
+                </div>
+
+                <div class="visual-example">
+                    <strong>Exemplos:</strong><br>
+                    300.000.000 = 3 × 10⁸ (velocidade da luz em m/s)<br>
+                    0,000000001 = 1 × 10⁻⁹ (1 nanômetro em metros)<br>
+                    6.022.000.000.000.000.000.000.000 = 6,022 × 10²³ (Número de Avogadro)
+                </div>
+            </div>
+
+            <div class="theory-card">
+                <h3>🎯 Como Converter</h3>
+                <p><strong>Para notação científica:</strong></p>
+                <ul style="margin-left: 2rem; line-height: 2;">
+                    <li>Mova a vírgula até obter um número entre 1 e 10</li>
+                    <li>Conte quantas casas moveu → esse é o expoente</li>
+                    <li>Moveu para <strong>esquerda</strong> → expoente <strong>positivo</strong></li>
+                    <li>Moveu para <strong>direita</strong> → expoente <strong>negativo</strong></li>
+                </ul>
+            </div>
+
+            <div class="theory-card">
+                <h3>➕ Operações</h3>
+                <div class="formula-box">
+                    <strong>Multiplicação:</strong> (a × 10ᵐ) × (b × 10ⁿ) = (a×b) × 10ᵐ⁺ⁿ<br><br>
+                    <strong>Divisão:</strong> (a × 10ᵐ) ÷ (b × 10ⁿ) = (a÷b) × 10ᵐ⁻ⁿ
+                </div>
+            </div>
+        </div>
+
+        <!-- Calculadora Notação Científica -->
+        <div id="notacao-calculadora" class="tab-content">
+            <div class="calculator-container">
+                <h2 style="text-align: center; margin-bottom: 1.5rem; color: var(--primary);">Operações com Notação Científica</h2>
+                
+                <div class="sci-inputs">
+                    <div class="sci-notation">
+                        <input type="number" id="sci-a1" placeholder="a" step="any">
+                        <span class="times-ten">× 10</span>
+                        <input type="number" id="sci-e1" placeholder="n" style="width: 60px;">
+                    </div>
+                    
+                    <select id="sci-op" style="padding: 0.5rem; border-radius: 5px; border: 2px solid #e2e8f0;">
+                        <option value="mult">×</option>
+                        <option value="div">÷</option>
+                        <option value="add">+</option>
+                        <option value="sub">-</option>
+                    </select>
+
+                    <div class="sci-notation">
+                        <input type="number" id="sci-a2" placeholder="a" step="any">
+                        <span class="times-ten">× 10</span>
+                        <input type="number" id="sci-e2" placeholder="n" style="width: 60px;">
+                    </div>
+                </div>
+
+                <button class="calculate-btn" onclick="calcularNotacao()">Calcular</button>
+
+                <div id="sci-resultado" class="result-box">
+                    <div>Resultado:</div>
+                    <div class="result-value" id="sci-result-value">-</div>
+                    <div class="steps" id="sci-steps"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conversor -->
+        <div id="notacao-conversor" class="tab-content">
+            <div class="calculator-container">
+                <h2 style="text-align: center; margin-bottom: 1.5rem; color: var(--primary);">Conversor de Notação Científica</h2>
+                
+                <div class="input-group">
+                    <label>Número Decimal</label>
+                    <input type="text" id="conv-decimal" placeholder="Ex: 4500000 ou 0,000032" oninput="decimalToSci()">
+                </div>
+
+                <div style="text-align: center; font-size: 2rem; color: var(--primary); margin: 1rem 0;">⇅</div>
+
+                <div class="input-group">
+                    <label>Notação Científica</label>
+                    <div class="sci-notation" style="justify-content: center;">
+                        <input type="number" id="conv-sci-a" placeholder="a" step="any" oninput="sciToDecimal()">
+                        <span class="times-ten">× 10</span>
+                        <input type="number" id="conv-sci-e" placeholder="n" style="width: 80px;" oninput="sciToDecimal()">
+                    </div>
+                </div>
+
+                <div id="conv-resultado" class="result-box" style="display: block;">
+                    <div class="steps" id="conv-steps" style="text-align: center; font-size: 1.1rem;">
+                        Digite um valor para converter...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exercícios Notação Científica -->
+        <div id="notacao-exercicios" class="tab-content">
+            <div class="progress-container">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span>Seu Progresso</span>
+                    <span id="sci-progress-text">0/3 concluídos</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="sci-progress-bar" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div id="sci-exercises-container"></div>
+        </div>
+    </div>
+
+    <script>
+        // Navegação
+        function showHome() {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.getElementById('home').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showRegraDeTres() {
+            document.getElementById('home').style.display = 'none';
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.getElementById('regra-de-tres').classList.add('active');
+            loadRegraExercises();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showNotacaoCientifica() {
+            document.getElementById('home').style.display = 'none';
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.getElementById('notacao-cientifica').classList.add('active');
+            loadSciExercises();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Tabs
+        function switchTab(section, tab) {
+            // Atualiza botões
+            const container = document.getElementById(section === 'regra' ? 'regra-de-tres' : 'notacao-cientifica');
+            container.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Atualiza conteúdo
+            container.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(`${section}-${tab}`).classList.add('active');
+        }
+
+        // Regra de Três Calculadora
+        let regraType = 'direta';
+
+        function updateRegraType() {
+            regraType = document.querySelector('input[name="tipo-regra"]:checked').value;
+        }
+
+        function calcularRegraDeTres() {
+            const a = parseFloat(document.getElementById('regra-a').value);
+            const b = parseFloat(document.getElementById('regra-b').value);
+            const c = parseFloat(document.getElementById('regra-c').value);
+
+            if (isNaN(a) || isNaN(b) || isNaN(c)) {
+                alert('Por favor, preencha todos os valores!');
+                return;
+            }
+
+            let x, steps;
+            if (regraType === 'direta') {
+                x = (b * c) / a;
+                steps = `
+                    <strong>Passo a passo (Proporção Direta):</strong><br>
+                    ${a} está para ${b}, assim como ${c} está para x<br>
+                    Fórmula: x = (b × c) / a<br>
+                    x = (${b} × ${c}) / ${a}<br>
+                    x = ${b * c} / ${a}<br>
+                    x = <strong>${x.toFixed(4).replace(/\.?0+$/, '')}</strong>
+                `;
+            } else {
+                x = (a * b) / c;
+                steps = `
+                    <strong>Passo a passo (Proporção Inversa):</strong><br>
+                    ${a} está para ${b}, inversamente ${c} está para x<br>
+                    Fórmula: x = (a × b) / c<br>
+                    x = (${a} × ${b}) / ${c}<br>
+                    x = ${a * b} / ${c}<br>
+                    x = <strong>${x.toFixed(4).replace(/\.?0+$/, '')}</strong>
+                `;
+            }
+
+            document.getElementById('regra-x').value = x.toFixed(4).replace(/\.?0+$/, '');
+            document.getElementById('regra-result-value').textContent = x.toFixed(4).replace(/\.?0+$/, '');
+            document.getElementById('regra-steps').innerHTML = steps;
+            document.getElementById('regra-resultado').classList.add('show');
+
+            createConfetti(event.clientX, event.clientY);
+        }
+
+        // Notação Científica Calculadora
+        function calcularNotacao() {
+            const a1 = parseFloat(document.getElementById('sci-a1').value);
+            const e1 = parseInt(document.getElementById('sci-e1').value);
+            const a2 = parseFloat(document.getElementById('sci-a2').value);
+            const e2 = parseInt(document.getElementById('sci-e2').value);
+            const op = document.getElementById('sci-op').value;
+
+            if (isNaN(a1) || isNaN(e1) || isNaN(a2) || isNaN(e2)) {
+                alert('Por favor, preencha todos os valores!');
+                return;
+            }
+
+            let resultA, resultE, steps;
+
+            switch(op) {
+                case 'mult':
+                    resultA = a1 * a2;
+                    resultE = e1 + e2;
+                    steps = `(${a1} × ${a2}) × 10^(${e1} + ${e2}) = ${resultA} × 10^${resultE}`;
+                    break;
+                case 'div':
+                    resultA = a1 / a2;
+                    resultE = e1 - e2;
+                    steps = `(${a1} ÷ ${a2}) × 10^(${e1} - ${e2}) = ${resultA.toFixed(4)} × 10^${resultE}`;
+                    break;
+                case 'add':
+                case 'sub':
+                    // Igualar expoentes
+                    const diff = e1 - e2;
+                    let newA1, newA2, newE;
+                    if (diff > 0) {
+                        newA1 = a1;
+                        newA2 = a2 * Math.pow(10, -diff);
+                        newE = e1;
+                    } else {
+                        newA1 = a1 * Math.pow(10, diff);
+                        newA2 = a2;
+                        newE = e2;
+                    }
+                    resultA = op === 'add' ? newA1 + newA2 : newA1 - newA2;
+                    resultE = newE;
+                    
+                    // Ajustar para notação científica correta
+                    if (resultA >= 10) {
+                        resultA /= 10;
+                        resultE += 1;
+                    } else if (resultA < 1 && resultA > 0) {
+                        resultA *= 10;
+                        resultE -= 1;
+                    }
+                    
+                    steps = `Igualando expoentes: ${newA1.toFixed(4)} × 10^${newE} ${op === 'add' ? '+' : '-'} ${newA2.toFixed(4)} × 10^${newE}<br>
+                            = ${resultA.toFixed(4)} × 10^${resultE}`;
+                    break;
+            }
+
+            // Ajustar resultado para notação científica padrão
+            if (resultA >= 10 || resultA <= -10) {
+                resultA /= 10;
+                resultE += 1;
+            } else if ((resultA < 1 && resultA > 0) || (resultA > -1 && resultA < 0)) {
+                resultA *= 10;
+                resultE -= 1;
+            }
+
+            document.getElementById('sci-result-value').innerHTML = `${resultA.toFixed(4).replace(/\.?0+$/, '')} × 10<sup>${resultE}</sup>`;
+            document.getElementById('sci-steps').innerHTML = `<strong>Cálculo:</strong><br>${steps}`;
+            document.getElementById('sci-resultado').classList.add('show');
+            
+            createConfetti(event.clientX, event.clientY);
+        }
+
+        // Conversor
+        function decimalToSci() {
+            const decimal = document.getElementById('conv-decimal').value.replace(',', '.');
+            const num = parseFloat(decimal);
+            
+            if (isNaN(num) || num === 0) {
+                document.getElementById('conv-steps').innerHTML = 'Digite um número válido...';
+                return;
+            }
+
+            const sci = toScientific(num);
+            document.getElementById('conv-sci-a').value = sci.a;
+            document.getElementById('conv-sci-e').value = sci.e;
+            
+            document.getElementById('conv-steps').innerHTML = `
+                <strong>${num}</strong> = <strong>${sci.a} × 10^${sci.e}</strong><br>
+                <small>A vírgula moveu ${Math.abs(sci.e)} casas para ${sci.e > 0 ? 'esquerda' : 'direita'}</small>
+            `;
+        }
+
+        function sciToDecimal() {
+            const a = parseFloat(document.getElementById('conv-sci-a').value);
+            const e = parseInt(document.getElementById('conv-sci-e').value);
+            
+            if (isNaN(a) || isNaN(e)) {
+                document.getElementById('conv-steps').innerHTML = 'Digite valores válidos...';
+                return;
+            }
+
+            const decimal = a * Math.pow(10, e);
+            document.getElementById('conv-decimal').value = decimal.toLocaleString('pt-BR');
+            
+            document.getElementById('conv-steps').innerHTML = `
+                <strong>${a} × 10^${e}</strong> = <strong>${decimal.toLocaleString('pt-BR')}</strong>
+            `;
+        }
+
+        function toScientific(num) {
+            if (num === 0) return { a: 0, e: 0 };
+            
+            const e = Math.floor(Math.log10(Math.abs(num)));
+            const a = num / Math.pow(10, e);
+            
+            return { a: parseFloat(a.toFixed(4)), e: e };
+        }
+
+        // Exercícios
+        const regraExercises = [
+            {
+                id: 1,
+                question: "Um carro percorre 240 km com 20 litros de combustível. Quantos litros são necessários para percorrer 600 km?",
+                options: ["40 litros", "50 litros", "60 litros", "70 litros"],
+                correct: 1,
+                difficulty: "easy"
+            },
+            {
+                id: 2,
+                question: "Se 8 operários constroem um muro em 15 dias, em quantos dias 12 operários fariam o mesmo trabalho?",
+                options: ["8 dias", "10 dias", "12 dias", "22,5 dias"],
+                correct: 1,
+                difficulty: "medium"
+            },
+            {
+                id: 3,
+                question: "Uma fábrica produz 500 peças em 8 horas com 10 máquinas. Quantas peças serão produzidas em 12 horas com 15 máquinas?",
+                options: ["750 peças", "1000 peças", "1125 peças", "1250 peças"],
+                correct: 2,
+                difficulty: "hard"
+            }
+        ];
+
+        const sciExercises = [
+            {
+                id: 1,
+                question: "Converta 0,000045 para notação científica:",
+                options: ["4,5 × 10⁻⁵", "45 × 10⁻⁶", "0,45 × 10⁻⁴", "4,5 × 10⁵"],
+                correct: 0,
+                difficulty: "easy"
+            },
+            {
+                id: 2,
+                question: "Calcule: (3 × 10⁴) × (2 × 10³)",
+                options: ["6 × 10⁷", "5 × 10⁷", "6 × 10¹²", "5 × 10¹²"],
+                correct: 0,
+                difficulty: "medium"
+            },
+            {
+                id: 3,
+                question: "A velocidade da luz é aproximadamente 300.000 km/s. Em notação científica em m/s, isso é:",
+                options: ["3 × 10⁵ m/s", "3 × 10⁸ m/s", "3 × 10¹¹ m/s", "0,3 × 10⁹ m/s"],
+                correct: 1,
+                difficulty: "hard"
+            }
+        ];
+
+        let regraProgress = 0;
+        let sciProgress = 0;
+
+        function loadRegraExercises() {
+            const container = document.getElementById('regra-exercises-container');
+            container.innerHTML = '';
+            
+            regraExercises.forEach((ex, index) => {
+                const card = createExerciseCard(ex, 'regra', index);
+                container.appendChild(card);
+            });
+        }
+
+        function loadSciExercises() {
+            const container = document.getElementById('sci-exercises-container');
+            container.innerHTML = '';
+            
+            sciExercises.forEach((ex, index) => {
+                const card = createExerciseCard(ex, 'sci', index);
+                container.appendChild(card);
+            });
+        }
+
+        function createExerciseCard(exercise, type, index) {
+            const div = document.createElement('div');
+            div.className = 'exercise-card';
+            div.innerHTML = `
+                <div class="exercise-header">
+                    <span class="difficulty ${exercise.difficulty}">${exercise.difficulty === 'easy' ? 'Fácil' : exercise.difficulty === 'medium' ? 'Médio' : 'Difícil'}</span>
+                    <span>Questão ${index + 1}</span>
+                </div>
+                <div class="exercise-question">${exercise.question}</div>
+                <div class="exercise-options" id="${type}-options-${index}">
+                    ${exercise.options.map((opt, i) => `
+                        <button class="option-btn" onclick="checkAnswer('${type}', ${index}, ${i}, ${exercise.correct})">${opt}</button>
+                    `).join('')}
+                </div>
+                <div class="feedback" id="${type}-feedback-${index}"></div>
+            `;
+            return div;
+        }
+
+        function checkAnswer(type, exerciseIndex, selected, correct) {
+            const options = document.querySelectorAll(`#${type}-options-${exerciseIndex} .option-btn`);
+            const feedback = document.getElementById(`${type}-feedback-${exerciseIndex}`);
+            
+            options.forEach((btn, i) => {
+                btn.classList.add('disabled');
+                if (i === correct) {
+                    btn.classList.add('correct');
+                } else if (i === selected && i !== correct) {
+                    btn.classList.add('wrong');
+                }
+            });
+
+            const isCorrect = selected === correct;
+            feedback.innerHTML = isCorrect ? 
+                '<strong style="color: var(--success);">✓ Correto! Parabéns!</strong>' : 
+                '<strong style="color: #ef4444;">✗ Incorreto. Tente entender a solução!</strong>';
+            feedback.classList.add('show');
+
+            if (isCorrect) {
+                if (type === 'regra' && regraProgress < regraExercises.length) {
+                    regraProgress++;
+                    updateProgress('regra');
+                } else if (type === 'sci' && sciProgress < sciExercises.length) {
+                    sciProgress++;
+                    updateProgress('sci');
+                }
+                createConfetti(window.innerWidth / 2, window.innerHeight / 2);
+            }
+        }
+
+        function updateProgress(type) {
+            const progress = type === 'regra' ? regraProgress : sciProgress;
+            const total = type === 'regra' ? regraExercises.length : sciExercises.length;
+            const percentage = (progress / total) * 100;
+            
+            document.getElementById(`${type}-progress-text`).textContent = `${progress}/${total} concluídos`;
+            document.getElementById(`${type}-progress-bar`).style.width = `${percentage}%`;
+        }
+
+        // Efeito de confete
+        function createConfetti(x, y) {
+            const colors = ['#6366f1', '#ec4899', '#06b6d4', '#10b981', '#f59e0b'];
+            for (let i = 0; i < 30; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = x + (Math.random() - 0.5) * 100 + 'px';
+                confetti.style.top = y + 'px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => confetti.remove(), 4000);
+            }
+        }
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            showHome();
+        });
+    </script>
+</body>
+</html>
